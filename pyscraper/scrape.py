@@ -82,5 +82,9 @@ for item in passedProps.items():
 # TODO
 # Create recursive function to find all elements with the same class
 # based on elementClasses list of lists
-# list(itertools.filterfalse(lambda x: x not in list2, list1))
 # Determine if/how to find product container if there is only one product on the site
+# Determine how to add prompts for users on N/A or not found values
+# Convert to flask API
+# Review efficiency
+# Check best way to achieve concurrent requests through FE
+# Use multiple API calls with Promise.race?

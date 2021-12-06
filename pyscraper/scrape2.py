@@ -39,52 +39,9 @@ productSelector['title'] = f"{el.name}.{'.'.join(el['class'])}"
 print(productSelector)
 
 
-# def findParentContainer(element):
-#     return element.parent
-
-
-# def determineElementClasses(list1, list2):
-#     return list(itertools.filterfalse(lambda x: x not in list2, list1))
-
-
-# for x in range(0, 4):
-#     el = findParentContainer(el)
-#     products = list(filter(lambda e: e != '\n', el.contents))
-#     elementTypes = list(map(lambda e: e.name, products))
-#     elementClasses = list(map(lambda e: e['class'], products))
-#     if len(elementTypes) > 1 and elementTypes.count(elementTypes[0]) == len(elementTypes):
-#         acc = []
-#         for i, cssClass in enumerate(elementClasses):
-#             if i == 0 and acc != elementClasses[i + 1]:
-#                 acc = elementClasses[i + 1]
-#             acc = determineElementClasses(cssClass, acc)
-#         if len(acc) > 0:
-#             productSelector["container"] = f"{elementTypes[0]}.{'.'.join(acc)}"
-#             break
-
-# allProds = soup.select(productSelector["container"])
-# originalProd = None
-# for prod in allProds:
-#     if prod.find(text=re.compile(passedProps["title"])):
-#         originalProd = prod
-#         break
-
-# print(originalProd)
-
-# for item in passedProps.items():
-#     if item[0] == "url" or productSelector[item[0]] != "":
-#         continue
-#     print(item)
-#     itemKey = item[0]
-#     itemValue = item[1]
-#     elFound = originalProd.find(text=re.compile(passedProps[itemKey]))
-#     if elFound == None:
-#         continue
-#     print(elFound.parent, 'found')
-
-
 # TODO
-# Create recursive function to find all elements with the same class
-# based on elementClasses list of lists
-# list(itertools.filterfalse(lambda x: x not in list2, list1))
-# Determine if/how to find product container if there is only one product on the site
+# Figure out best way to show a user which piece of information would be best
+# e.g. discourage using updating values such as ticking countdowns instead
+# use static draw date times & calculate the time remaining client side
+# Determine whether to scrape the data of all product thumbnails first
+# or whether to scrape thumbnails & full product page at the same time
