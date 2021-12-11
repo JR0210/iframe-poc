@@ -34,21 +34,32 @@ passedProps = {
     "timeRemaining": '3hrs',
 }
 
+data = data.read().replace('&nbsp;', ' ')
 soup = BeautifulSoup(data, 'lxml')
 body = soup.find('body')
+# print(body)
 titleFound = body.find_all(text=re.compile(passedProps["title"]))
-print(titleFound)
+# print(titleFound)
 el = titleFound[0].parent
-print(el)
+# print(el)
 productSelector['title'] = f"{el.name}.{'.'.join(el['class'])}"
-print(productSelector)
+# print(productSelector)
 
-print(body)
-dateTest = body.find_all(text=re.compile(
-    'The draw date for this competition is\s+05/12/2021 8:00 pm'))
+# INITIAL FIND DATE CLASS & TAG
+dateTest = body.find(text=re.compile(
+    'The draw date for this competition is 05/12/2021 8:00 pm'))
+dateParent = dateTest.parent
 
-print(dateTest)
-print(dateTest[0].parent)
+# Selector to use after initial scrape to get data using user passed data
+# selector - span.\"\\"s1\\"\"
+# Find all then use date parse in each until date is found
+allParentSelectors = body.find_all(
+    dateParent.name, class_=dateParent['class'][0])
+
+print(allParentSelectors)
+print(dateParent.name)
+print(dateParent['class'][0])
+
 
 dateParseTest = 'The draw date for this competition is&nbsp;05/12/2021 8:00 pm'
 dateParseTest = dateParseTest.replace('&nbsp;', ' ')
