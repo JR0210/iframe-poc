@@ -1,8 +1,6 @@
-from bs4 import BeautifulSoup, SoupStrainer
+from bs4 import BeautifulSoup
 import requests
 import re
-import lxml
-from functools import reduce
 import itertools
 
 headers = {
@@ -15,23 +13,27 @@ productSelector = {
     "container": '',
     "title": '',
     "price": '',
-    "tickets": '',
+    "ticketsRemaining": '',
     "maxPP": '',
     "timeRemaining": '',
 }
 
+baseUrl = 'https://dreamcargiveaways.co.uk'
 passedProps = {
     "url": 'https://dreamcargiveaways.co.uk/current-competitions/',
-    "title": 'Audi RS6 OR Porsche 911 Carrera S OR £100,000 Tax Free',
-    "price": '11.98',
-    "tickets": '1856 Remaining',
-    "maxPP": 'max. 12pp',
-    "timeRemaining": '3hrs',
+    "title": 'Mercedes-Benz GLC63S & £5000 or £70,000',
+    "price": '4.29',
+    "ticketsRemaining": '25898 Remaining',
+    "maxPP": 'max. 30pp',
+    "timeRemaining": '+7d',
 }
 
+for prop in passedProps.items():
+    passedProps[prop[0]] = re.escape(prop[1])
+
 soup = BeautifulSoup(channel, 'lxml')
-titleFound = soup.find_all(text=re.compile(passedProps["title"]))
-el = titleFound[0].parent
+titleFound = soup.find(text=re.compile(passedProps["title"]))
+el = titleFound.parent
 productSelector['title'] = f"{el.name}.{'.'.join(el['class'])}"
 
 
@@ -65,26 +67,52 @@ for prod in allProds:
         originalProd = prod
         break
 
-print(originalProd)
+print(originalProd, 'original prod')
 
 for item in passedProps.items():
     if item[0] == "url" or productSelector[item[0]] != "":
         continue
-    print(item)
     itemKey = item[0]
     itemValue = item[1]
+    if not passedProps[itemKey]:
+        continue
     elFound = originalProd.find(text=re.compile(passedProps[itemKey]))
     if elFound == None:
         continue
+    productSelector[itemKey] = f"{elFound.parent.name}.{'.'.join(elFound.parent['class'])}"
     print(elFound.parent, 'found')
 
+print(productSelector, 'FINAL')
+
+listings = soup.select(productSelector["container"])
+
+dataRetrieved = []
+
+for listing in listings:
+    listingItem = {}
+    linkTest = listing.find('a')
+    listingItem["url"] = baseUrl + linkTest['href']
+    print(linkTest, 'link test')
+    for item in productSelector.items():
+        itemKey = item[0]
+        itemValue = item[1]
+        if itemKey == "container" or not itemValue:
+            continue
+        listingSelected = listing.select_one(itemValue)
+        listingItem[itemKey] = listingSelected and listingSelected.string and listingSelected.string.strip()
+    dataRetrieved.append(listingItem)
+
+print(dataRetrieved)
 
 # TODO
-# Create recursive function to find all elements with the same class
-# based on elementClasses list of lists
 # Determine if/how to find product container if there is only one product on the site
 # Determine how to add prompts for users on N/A or not found values
 # Convert to flask API
 # Review efficiency
 # Check best way to achieve concurrent requests through FE
 # Use multiple API calls with Promise.race?
+
+# Determine how to get price/info when tag contains more than one child. Swap to dictionary
+# for each productSelector? E.g. { element: 'span', class: 'price' } for use with get text?
+
+# Clean up trailing ands in final for, create better error handling for this
