@@ -1,9 +1,5 @@
 from bs4 import BeautifulSoup, SoupStrainer
-import requests
 import re
-import lxml
-from functools import reduce
-import itertools
 from dateutil.parser import parse
 
 import codecs
@@ -34,9 +30,9 @@ passedProps = {
     "timeRemaining": '3hrs',
 }
 
+onlyBody = SoupStrainer("body")
 data = data.read().replace('&nbsp;', ' ')
-soup = BeautifulSoup(data, 'lxml')
-body = soup.find('body')
+body = BeautifulSoup(data, 'lxml', parse_only=onlyBody)
 # print(body)
 titleFound = body.find_all(text=re.compile(passedProps["title"]))
 # print(titleFound)
