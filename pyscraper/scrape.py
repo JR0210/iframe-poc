@@ -23,9 +23,9 @@ passedProps = {
     "url": 'https://dreamcargiveaways.co.uk/current-competitions/',
     "title": 'Mercedes-Benz GLC63S & £5000 or £70,000',
     "price": '4.29',
-    "ticketsRemaining": '25898 Remaining',
+    "ticketsRemaining": '23825 Remaining',
     "maxPP": 'max. 30pp',
-    "timeRemaining": '+7d',
+    "timeRemaining": '+6d',
 }
 
 for prop in passedProps.items():
@@ -98,8 +98,17 @@ for listing in listings:
         itemValue = item[1]
         if itemKey == "container" or not itemValue:
             continue
-        listingSelected = listing.select_one(itemValue)
-        listingItem[itemKey] = listingSelected and listingSelected.string and listingSelected.string.strip()
+        listingSelected = listing.select(itemValue)
+        if not listingSelected:
+            continue
+        if itemKey == "price" and len(listingSelected) > 1:
+            formattedPrices = list(
+                map(lambda e: e.get_text().strip(), listingSelected))
+            listingItem[itemKey] = min(formattedPrices)
+            continue
+
+        print(listingSelected, 'listing selected')
+        listingItem[itemKey] = listingSelected[0].get_text().strip()
     dataRetrieved.append(listingItem)
 
 print(dataRetrieved)
@@ -116,3 +125,12 @@ print(dataRetrieved)
 # for each productSelector? E.g. { element: 'span', class: 'price' } for use with get text?
 
 # Clean up trailing ands in final for, create better error handling for this
+
+
+# listingItem["title"] = listing.select_one(productSelector["title"])
+# listingItem["price"] = listing.select_one(productSelector["price"])
+# listingItem["ticketsRemaining"] = listing.select_one(
+#     productSelector["ticketsRemaining"])
+# listingItem["maxPP"] = listing.select_one(productSelector["maxPP"])
+# listingItem["timeRemaining"] = listing.select_one(
+#     productSelector["timeRemaining"])

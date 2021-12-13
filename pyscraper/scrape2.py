@@ -37,7 +37,7 @@ body = BeautifulSoup(data, 'lxml', parse_only=onlyBody)
 titleFound = body.find_all(text=re.compile(passedProps["title"]))
 # print(titleFound)
 el = titleFound[0].parent
-# print(el)
+print(el)
 productSelector['title'] = f"{el.name}.{'.'.join(el['class'])}"
 # print(productSelector)
 
